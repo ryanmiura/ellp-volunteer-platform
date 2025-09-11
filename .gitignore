@@ -1,0 +1,15 @@
+# Arquivos de ambiente
+.env
+
+# Dependências do Node
+frontend/node_modules/
+
+# Pasta de build do Frontend
+frontend/dist/
+
+# Logs e arquivos temporários
+*.log
+tmp/
+
+# Binário do Go 
+backend/app

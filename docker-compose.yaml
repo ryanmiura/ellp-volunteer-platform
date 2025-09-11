@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Serviço do Backend
+  backend:
+    # Constrói a imagem usando o Dockerfile.dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: backend
+    ports:
+      - "8080:8080"
+    # O volume sincroniza sua pasta local com a pasta dentro do container
+    volumes:
+      - ./backend:/app
+    # Comando para rodar a aplicação em modo de desenvolvimento
+    command: go run main.go
+    depends_on:
+      - mongo
+
+  # Serviço do Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: frontend
+    ports:
+       - "3000:5173"
+    volumes:
+      # Sincroniza o código, mas usa um truque para não sobrescrever o node_modules de dentro do container
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  # Serviço do Banco de Dados (MongoDB)
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=example
+
+volumes:
+  mongo-data:
