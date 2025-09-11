@@ -1,0 +1,18 @@
+# Usamos a imagem completa do Go que contém as ferramentas de build
+FROM golang:1.22-alpine
+
+# Definimos o diretório de trabalho
+WORKDIR /app
+
+# Copiamos os arquivos de módulo para instalar as dependências
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copiamos o resto do código
+COPY . .
+
+# Expomos a porta da nossa API
+EXPOSE 8080
+
+# O comando para iniciar será definido no docker-compose.yml para permitir live reload
+CMD ["go", "run", "main.go"]
