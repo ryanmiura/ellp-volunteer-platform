@@ -1,0 +1,21 @@
+# Usamos a imagem do Node que contém o npm e ferramentas de desenvolvimento
+FROM node:20-alpine
+
+# Definimos o diretório de trabalho
+WORKDIR /app
+
+# Copiamos apenas o package.json e package-lock.json
+# Isso aproveita o cache do Docker se as dependências не mudarem
+COPY package*.json ./
+
+# Instalamos as dependências
+RUN npm install
+
+# Copiamos o restante do código da aplicação
+COPY . .
+
+# Expomos a porta padrão do servidor de desenvolvimento do Vite
+EXPOSE 5173
+
+# Comando para iniciar o servidor de desenvolvimento
+CMD ["npm", "run", "dev"]
