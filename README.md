@@ -79,3 +79,122 @@ O projeto será desenvolvido utilizando a metodologia Scrum, com a realização 
 | **Semanas 2 a 4** | **Sprint 1** | **Foco:** Construir a base do sistema (CRUD de voluntários e segurança).<br>- **Backlog:** RF01, RF02, RF03, RF04, RF05, RF06, RF07.<br>- **Entregáveis:** Sistema com login funcional, cadastro, listagem, edição e inativação de voluntários. |
 | **Semanas 6 a 8** | **Sprint 2** | **Foco:** Agregar funcionalidades de valor (histórico e documentos).<br>- **Backlog:** RF08, RF09, RF10, RF11, RF12.<br>- **Entregáveis:** Funcionalidades de cadastro de oficinas, associação de voluntários e geração do Termo de Voluntariado em PDF. |
 
+# Arquiteturas Especificas
+
+## Backend
+``` 
+backend/
+├── cmd/
+│   └── main.go                    # Ponto de entrada da aplicação
+├── internal/
+│   ├── handlers/                  # Controladores HTTP (ex.: volunteer_handler.go, workshop_handler.go)
+│   │   ├── auth_handler.go        # Para login/logout
+│   │   └── ...
+│   ├── services/                  # Lógica de negócio (use cases)
+│   │   ├── volunteer_service.go   # Regras para voluntários
+│   │   ├── workshop_service.go    # Regras para oficinas
+│   │   └── auth_service.go        # Autenticação
+│   ├── models/                    # Entidades de domínio
+│   │   ├── volunteer.go           # Structs para Voluntário
+│   │   ├── workshop.go            # Structs para Oficina
+│   │   └── user.go                # Para usuários autenticados
+│   ├── repositories/              # Acesso a dados
+│   │   ├── volunteer_repo.go      # Interface e implementação para MongoDB
+│   │   ├── workshop_repo.go
+│   │   └── interfaces/            # Interfaces para injeção de dependência
+│   ├── middleware/                # Middlewares (ex.: auth_middleware.go para JWT)
+│   └── config/                    # Configurações (ex.: database.go, jwt.go)
+├── pkg/                           # Pacotes compartilhados (ex.: utils para PDF)
+│   └── pdf_generator.go           # Para gerar Termo de Voluntariado
+├── Dockerfile.dev                 # Já existe
+├── go.mod                         # Adicionar dependências: mongo-driver, jwt-go, etc.
+└── go.sum
+``` 
+## Frontend
+``` 
+frontend/
+├── public/
+│   ├── vite.svg                   # Já existe
+│   └── favicon.ico
+├── src/
+│   ├── components/                # Componentes reutilizáveis (Atomic Design)
+│   │   ├── ui/                    # Componentes base (atoms)
+│   │   │   ├── Button/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Button.module.css
+│   │   │   │   └── index.ts
+│   │   │   ├── Input/
+│   │   │   ├── Modal/
+│   │   │   ├── Card/
+│   │   │   └── LoadingSpinner/
+│   │   ├── forms/                 # Componentes de formulário (molecules)
+│   │   │   ├── VolunteerForm/
+│   │   │   ├── WorkshopForm/
+│   │   │   └── LoginForm/
+│   │   └── layout/                # Componentes de layout (organisms)
+│   │       ├── Header/
+│   │       ├── Sidebar/
+│   │       ├── Footer/
+│   │       └── Layout/
+│   ├── pages/                     # Páginas principais (templates/pages)
+│   │   ├── auth/
+│   │   │   ├── LoginPage.tsx      # RF01 - Autenticar Usuário
+│   │   │   └── index.ts
+│   │   ├── volunteers/
+│   │   │   ├── VolunteersListPage.tsx    # RF04 - Listar e Buscar
+│   │   │   ├── VolunteerDetailsPage.tsx  # RF05 - Visualizar Detalhes
+│   │   │   ├── CreateVolunteerPage.tsx   # RF03 - Cadastrar
+│   │   │   ├── EditVolunteerPage.tsx     # RF06 - Editar
+│   │   │   └── index.ts
+│   │   ├── workshops/
+│   │   │   ├── WorkshopsListPage.tsx     # RF08 - Gerenciar Oficinas
+│   │   │   ├── WorkshopDetailsPage.tsx   # RF09 - Associar Voluntários
+│   │   │   ├── CreateWorkshopPage.tsx
+│   │   │   └── index.ts
+│   │   └── dashboard/
+│   │       └── DashboardPage.tsx
+│   ├── hooks/                     # Custom hooks
+│   │   ├── useAuth.ts             # Hook para autenticação
+│   │   ├── useVolunteers.ts       # Hook para gerenciar voluntários
+│   │   ├── useWorkshops.ts        # Hook para gerenciar oficinas
+│   │   └── usePDF.ts              # RF11 - Gerar PDF
+│   ├── services/                  # Comunicação com API
+│   │   ├── api.ts                 # Configuração do Axios
+│   │   ├── auth.service.ts        # Serviços de autenticação
+│   │   ├── volunteers.service.ts  # CRUD de voluntários
+│   │   ├── workshops.service.ts   # CRUD de oficinas
+│   │   └── pdf.service.ts         # Geração de PDF
+│   ├── store/                     # Gerenciamento de estado (Context API ou Zustand)
+│   │   ├── auth/
+│   │   │   ├── AuthContext.tsx
+│   │   │   └── AuthProvider.tsx
+│   │   ├── volunteers/
+│   │   │   └── VolunteersContext.tsx
+│   │   └── index.ts
+│   ├── types/                     # Definições TypeScript
+│   │   ├── volunteer.types.ts     # Interfaces para Voluntário
+│   │   ├── workshop.types.ts      # Interfaces para Oficina
+│   │   ├── auth.types.ts          # Interfaces para Auth
+│   │   └── api.types.ts           # Tipos para respostas da API
+│   ├── utils/                     # Utilitários e helpers
+│   │   ├── constants.ts           # Constantes da aplicação
+│   │   ├── formatters.ts          # Formatação de datas, strings, etc.
+│   │   ├── validators.ts          # Validações de formulário
+│   │   └── helpers.ts             # Funções auxiliares
+│   ├── styles/                    # Estilos globais (Tailwind CSS)
+│   │   ├── globals.css
+│   │   ├── components.css         # Classes customizadas do Tailwind
+│   │   └── variables.css          # Variáveis CSS customizadas
+│   ├── assets/                    # Já existe
+│   │   └── react.svg
+│   ├── App.tsx                    # Já existe - Configuração de rotas
+│   ├── main.tsx                   # Já existe - Ponto de entrada
+│   ├── index.css                  # Já existe
+│   └── vite-env.d.ts             # Já existe
+├── package.json                   # Adicionar dependências necessárias
+├── tailwind.config.js             # Configuração do Tailwind CSS
+├── tsconfig.json                  # Já existe
+├── vite.config.ts                # Já existe
+├── eslint.config.js              # Já existe
+└── Dockerfile.dev                # Já existe
+```
