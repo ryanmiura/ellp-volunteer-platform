@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"ellp-volunter-platform/backend/internal/config"
+	"ellp-volunter-platform/backend/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +20,10 @@ func main() {
 	}()
 
 	r := gin.Default()
+
+	// Aplicar middlewares
+	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.LoggingMiddleware())
 
 	r.GET("/api/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
