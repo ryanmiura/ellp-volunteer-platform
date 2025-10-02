@@ -15,4 +15,4 @@ COPY . .
 EXPOSE 8080
 
 # O comando para iniciar será definido no docker-compose.yml para permitir live reload
-CMD ["go", "run", "main.go"]
+CMD ["go", "run", "cmd/main.go"]
