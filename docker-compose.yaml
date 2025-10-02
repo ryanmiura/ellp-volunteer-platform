@@ -14,7 +14,7 @@ services:
     volumes:
       - ./backend:/app
     # Comando para rodar a aplicação em modo de desenvolvimento
-    command: go run main.go
+    command: go run cmd/main.go
     depends_on:
       - mongo
 
