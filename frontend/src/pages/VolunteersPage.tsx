@@ -152,28 +152,28 @@ function VolunteersPage() {
       <div className="bg-white shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                     Nome
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
                     Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                     Telefone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
                     Acadêmico
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6">
                     Curso
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/8">
                     RA
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-32">
                     Ações
                   </th>
                 </tr>
@@ -181,46 +181,46 @@ function VolunteersPage() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {paginatedVolunteers.map((volunteer) => (
                   <tr key={volunteer.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {volunteer.name}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.email}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.phone || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.isAcademic ? 'Sim' : 'Não'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.course || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.ra || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-4 py-4 whitespace-nowrap text-sm font-medium w-32">
                       <div className="flex space-x-2">
                         <button
                           onClick={() => handleView(volunteer)}
-                          className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                          className="w-8 h-8 text-blue-600 hover:text-blue-900 p-1 rounded flex items-center justify-center"
                           title="Visualizar"
                         >
-                          <img src={viewIcon} alt="Visualizar" className="w-4 h-4" />
+                          <img src={viewIcon} alt="Visualizar" className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleEdit(volunteer)}
-                          className="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                          className="w-8 h-8 text-yellow-600 hover:text-yellow-900 p-1 rounded flex items-center justify-center"
                           title="Editar"
                         >
-                          <img src={editIcon} alt="Editar" className="w-4 h-4" />
+                          <img src={editIcon} alt="Editar" className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleDeactivate(volunteer)}
-                          className="text-red-600 hover:text-red-900 p-1 rounded"
+                          className="w-8 h-8 text-red-600 hover:text-red-900 p-1 rounded flex items-center justify-center"
                           title="Inativar"
                         >
-                          <img src={trashIcon} alt="Inativar" className="w-4 h-4" />
+                          <img src={trashIcon} alt="Inativar" className="w-5 h-5" />
                         </button>
                       </div>
                     </td>
