@@ -1,7 +1,9 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
+import Button from './Button'
 
 function Layout() {
   const location = useLocation()
+  const navigate = useNavigate()
 
   const navigation = [
     { name: 'Painel', path: '/dashboard' },
@@ -10,16 +12,16 @@ function Layout() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-200 via-blue-100 to-indigo-200">
       {/* Navigation */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">
+                <Link to="/dashboard" className="text-xl font-bold text-gray-900 hover:text-gray-700 transition-colors">
                   ELLP - Plataforma de Voluntários
-                </h1>
+                </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                 {navigation.map((item) => (
@@ -36,6 +38,15 @@ function Layout() {
                   </Link>
                 ))}
               </div>
+            </div>
+            <div className="flex items-center">
+              <Button
+                variant="primary"
+                onClick={() => navigate('/login')}
+                className="text-sm"
+              >
+                Login
+              </Button>
             </div>
           </div>
         </div>
