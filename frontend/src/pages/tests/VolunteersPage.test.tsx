@@ -33,7 +33,6 @@ describe('VolunteersPage', () => {
   it('should render volunteer list with mock data', () => {
     renderWithRouter(<VolunteersPage />);
     
-    // Check for some mock volunteer names
     expect(screen.getByText('João Silva')).toBeInTheDocument();
     expect(screen.getByText('Maria Santos')).toBeInTheDocument();
   });
@@ -55,17 +54,12 @@ describe('VolunteersPage', () => {
     const searchInput = screen.getByPlaceholderText(/digite o nome do voluntário/i);
     await user.type(searchInput, 'João');
     
-    // João Silva should be visible
     expect(screen.getByText('João Silva')).toBeInTheDocument();
-    
-    // Maria Santos should not be visible (only 5 items per page, but João should be first)
-    // Note: This assumes the filter is working
   });
 
   it('should render pagination controls', () => {
     renderWithRouter(<VolunteersPage />);
     
-    // Check for pagination elements (Anterior/Próximo buttons or page numbers)
     const buttons = screen.getAllByRole('button');
     const paginationButtons = buttons.filter(btn => 
       btn.textContent?.includes('Anterior') || 
@@ -79,12 +73,10 @@ describe('VolunteersPage', () => {
   it('should render action buttons for each volunteer', () => {
     renderWithRouter(<VolunteersPage />);
     
-    // Each visible volunteer should have view, edit, and deactivate buttons (using title attribute)
     const viewButtons = screen.getAllByTitle('Visualizar');
     const editButtons = screen.getAllByTitle('Editar');
     const deactivateButtons = screen.getAllByTitle('Inativar');
     
-    // Should have at least 5 of each button (one per visible volunteer)
     expect(viewButtons.length).toBeGreaterThanOrEqual(5);
     expect(editButtons.length).toBeGreaterThanOrEqual(5);
     expect(deactivateButtons.length).toBeGreaterThanOrEqual(5);

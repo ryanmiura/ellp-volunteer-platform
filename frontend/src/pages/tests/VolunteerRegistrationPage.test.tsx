@@ -53,7 +53,6 @@ describe('VolunteerRegistrationPage', () => {
     const submitButton = screen.getByRole('button', { name: /cadastrar/i });
     await user.click(submitButton);
     
-    // Should show validation errors
     expect(screen.getByText('Nome é obrigatório')).toBeInTheDocument();
     expect(screen.getByText('Email é obrigatório')).toBeInTheDocument();
   });
