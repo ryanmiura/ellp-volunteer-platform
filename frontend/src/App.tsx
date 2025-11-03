@@ -3,6 +3,7 @@ import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
 import DashboardPage from './pages/DashboardPage'
 import VolunteersPage from './pages/VolunteersPage'
+import VolunteerRegistrationPage from './pages/VolunteerRegistrationPage'
 import WorkshopsPage from './pages/WorkshopsPage'
 import './App.css'
 
@@ -17,6 +18,7 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/volunteers" element={<VolunteersPage />} />
+          <Route path="/volunteers/register" element={<VolunteerRegistrationPage />} />
           <Route path="/workshops" element={<WorkshopsPage />} />
         </Route>
 

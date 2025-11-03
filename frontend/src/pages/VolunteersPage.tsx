@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Volunteer } from '../types/volunteer.types';
 import viewIcon from '../assets/view-icon.svg';
 import editIcon from '../assets/edit-icon.svg';
@@ -96,6 +97,7 @@ function VolunteersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   const filteredVolunteers = volunteers.filter(volunteer =>
     volunteer.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -126,8 +128,18 @@ function VolunteersPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Voluntários</h1>
-        <p className="text-gray-600 mt-2">Gerencie os voluntários da plataforma</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Voluntários</h1>
+            <p className="text-gray-600 mt-2">Gerencie os voluntários da plataforma</p>
+          </div>
+          <button
+            onClick={() => navigate('/volunteers/register')}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            Cadastrar Voluntário
+          </button>
+        </div>
       </div>
 
       <div className="mb-4">
