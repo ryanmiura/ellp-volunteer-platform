@@ -22,3 +22,25 @@ export interface VolunteersListResponse {
   limit: number;
 }
 
+// Form Types
+export interface VolunteerFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  isAcademic: boolean;
+  course?: string;
+  ra?: string;
+}
+
+export interface UpdateVolunteerForm extends Partial<VolunteerFormData> {
+  id: string;
+}
+
+// Validation Types
+export interface VolunteerFormErrors {
+  name?: string;
+  email?: string;
+  phone?: string;
+  course?: string;
+  ra?: string;
+}
