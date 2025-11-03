@@ -14,10 +14,6 @@ interface LoginForm {
 interface RegisterForm {
   fullName: string;
   email: string;
-  phone: string;
-  isAcademic: string;
-  course: string;
-  ra: string;
   password: string;
   confirmPassword: string;
 }
@@ -32,10 +28,6 @@ function LoginPage() {
   const [registerForm, setRegisterForm] = useState<RegisterForm>({
     fullName: '',
     email: '',
-    phone: '',
-    isAcademic: '',
-    course: '',
-    ra: '',
     password: '',
     confirmPassword: ''
   });
@@ -76,25 +68,6 @@ function LoginPage() {
       errors.email = 'Email inválido';
     }
 
-    if (!registerForm.phone.trim()) {
-      errors.phone = 'Telefone é obrigatório';
-    }
-
-    if (!registerForm.isAcademic) {
-      errors.isAcademic = 'Selecione se é acadêmico';
-    }
-
-    // Validar curso e RA apenas se for acadêmico
-    if (registerForm.isAcademic === 'sim') {
-      if (!registerForm.course.trim()) {
-        errors.course = 'Curso é obrigatório para acadêmicos';
-      }
-
-      if (!registerForm.ra.trim()) {
-        errors.ra = 'RA é obrigatório para acadêmicos';
-      }
-    }
-
     if (!registerForm.password) {
       errors.password = 'Senha é obrigatória';
     } else if (registerForm.password.length < 6) {
@@ -112,15 +85,11 @@ function LoginPage() {
       return;
     }
 
-    alert(`Cadastro realizado com sucesso!\nNome: ${registerForm.fullName}\nEmail: ${registerForm.email}\nTelefone: ${registerForm.phone}\nAcadêmico: ${registerForm.isAcademic === 'sim' ? 'Sim' : 'Não'}${registerForm.isAcademic === 'sim' ? `\nCurso: ${registerForm.course}\nRA: ${registerForm.ra}` : ''}`);
+    alert(`Cadastro realizado com sucesso!\nNome: ${registerForm.fullName}\nEmail: ${registerForm.email}`);
     setRegisterErrors({});
     setRegisterForm({
       fullName: '',
       email: '',
-      phone: '',
-      isAcademic: '',
-      course: '',
-      ra: '',
       password: '',
       confirmPassword: ''
     });
@@ -276,79 +245,6 @@ function LoginPage() {
                   }}
                   error={registerErrors.email}
                 />
-
-                <Input
-                  label="Telefone"
-                  type="tel"
-                  placeholder="(00) 00000-0000"
-                  value={registerForm.phone}
-                  onChange={(e) => {
-                    setRegisterForm({ ...registerForm, phone: e.target.value });
-                    if (registerErrors.phone) {
-                      setRegisterErrors({ ...registerErrors, phone: undefined });
-                    }
-                  }}
-                  error={registerErrors.phone}
-                />
-
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    É Acadêmico?
-                  </label>
-                  <select
-                    value={registerForm.isAcademic}
-                    onChange={(e) => {
-                      setRegisterForm({ ...registerForm, isAcademic: e.target.value });
-                      if (registerErrors.isAcademic) {
-                        setRegisterErrors({ ...registerErrors, isAcademic: undefined });
-                      }
-                    }}
-                    className={`block w-full px-3 py-2 border ${
-                      registerErrors.isAcademic ? 'border-red-500' : 'border-gray-300'
-                    } rounded-md shadow-sm focus:outline-none focus:ring-2 ${
-                      registerErrors.isAcademic ? 'focus:ring-red-500 focus:border-red-500' : 'focus:ring-blue-500 focus:border-blue-500'
-                    } sm:text-sm`}
-                  >
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                  </select>
-                  {registerErrors.isAcademic && (
-                    <p className="mt-1 text-sm text-red-600">{registerErrors.isAcademic}</p>
-                  )}
-                </div>
-
-                {registerForm.isAcademic === 'sim' && (
-                  <>
-                    <Input
-                      label="Curso"
-                      type="text"
-                      placeholder="Digite seu curso"
-                      value={registerForm.course}
-                      onChange={(e) => {
-                        setRegisterForm({ ...registerForm, course: e.target.value });
-                        if (registerErrors.course) {
-                          setRegisterErrors({ ...registerErrors, course: undefined });
-                        }
-                      }}
-                      error={registerErrors.course}
-                    />
-
-                    <Input
-                      label="RA (Registro Acadêmico)"
-                      type="text"
-                      placeholder="Digite seu RA"
-                      value={registerForm.ra}
-                      onChange={(e) => {
-                        setRegisterForm({ ...registerForm, ra: e.target.value });
-                        if (registerErrors.ra) {
-                          setRegisterErrors({ ...registerErrors, ra: undefined });
-                        }
-                      }}
-                      error={registerErrors.ra}
-                    />
-                  </>
-                )}
 
                 <Input
                   label="Senha"
