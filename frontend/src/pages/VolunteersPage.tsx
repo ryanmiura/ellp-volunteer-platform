@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import type { Volunteer } from '../types/volunteer.types';
+import viewIcon from '../assets/view-icon.svg';
+import editIcon from '../assets/edit-icon.svg';
+import trashIcon from '../assets/trash-icon.svg';
 
 const mockVolunteers: Volunteer[] = [
   {
@@ -106,6 +109,20 @@ function VolunteersPage() {
     setCurrentPage(page);
   };
 
+  const handleView = (volunteer: Volunteer) => {
+    alert(`Visualizar voluntário: ${volunteer.name}\nEmail: ${volunteer.email}\nTelefone: ${volunteer.phone || 'Não informado'}`);
+  };
+
+  const handleEdit = (volunteer: Volunteer) => {
+    alert(`Editar voluntário: ${volunteer.name}\nFuncionalidade em desenvolvimento...`);
+  };
+
+  const handleDeactivate = (volunteer: Volunteer) => {
+    if (confirm(`Tem certeza que deseja inativar o voluntário ${volunteer.name}?`)) {
+      alert(`Voluntário ${volunteer.name} foi inativado com sucesso!`);
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -156,6 +173,9 @@ function VolunteersPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     RA
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -178,6 +198,31 @@ function VolunteersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.ra || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleView(volunteer)}
+                          className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                          title="Visualizar"
+                        >
+                          <img src={viewIcon} alt="Visualizar" className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleEdit(volunteer)}
+                          className="text-yellow-600 hover:text-yellow-900 p-1 rounded"
+                          title="Editar"
+                        >
+                          <img src={editIcon} alt="Editar" className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeactivate(volunteer)}
+                          className="text-red-600 hover:text-red-900 p-1 rounded"
+                          title="Inativar"
+                        >
+                          <img src={trashIcon} alt="Inativar" className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
