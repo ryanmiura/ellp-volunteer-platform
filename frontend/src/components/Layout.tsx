@@ -4,9 +4,9 @@ function Layout() {
   const location = useLocation()
 
   const navigation = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Volunteers', path: '/volunteers' },
-    { name: 'Workshops', path: '/workshops' },
+    { name: 'Painel', path: '/dashboard' },
+    { name: 'Voluntários', path: '/volunteers' },
+    { name: 'Oficinas', path: '/workshops' },
   ]
 
   return (
@@ -18,7 +18,7 @@ function Layout() {
             <div className="flex">
               <div className="flex-shrink-0 flex items-center">
                 <h1 className="text-xl font-bold text-gray-900">
-                  Volunteer Platform
+                  ELLP - Plataforma de Voluntários
                 </h1>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
