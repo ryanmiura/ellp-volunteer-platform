@@ -1,27 +1,42 @@
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 
-const volunteerSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email('Email inválido'),
-  phone: z.string().optional(),
-  course: z.string().optional(),
-  entryDate: z.string().min(1, 'Data de entrada é obrigatória'),
-});
-
-type VolunteerFormData = z.infer<typeof volunteerSchema>;
+interface VolunteerFormData {
+  name: string;
+  email: string;
+  phone?: string;
+  course?: string;
+  entryDate: string;
+}
 
 function VolunteerRegistrationPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<VolunteerFormData>({
-    resolver: zodResolver(volunteerSchema),
-  });
+  } = useForm<VolunteerFormData>();
 
   const onSubmit = (data: VolunteerFormData) => {
+    // Validação simples
+    if (!data.name.trim()) {
+      alert('Nome é obrigatório');
+      return;
+    }
+    if (!data.email.trim()) {
+      alert('Email é obrigatório');
+      return;
+    }
+    if (!data.entryDate) {
+      alert('Data de entrada é obrigatória');
+      return;
+    }
+
+    // Validação de email simples
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.email)) {
+      alert('Email inválido');
+      return;
+    }
+
     console.log('Dados do voluntário:', data);
     alert('Voluntário cadastrado com sucesso!');
   };
@@ -43,7 +58,7 @@ function VolunteerRegistrationPage() {
               <input
                 type="text"
                 id="name"
-                {...register('name')}
+                {...register('name', { required: 'Nome é obrigatório' })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Digite o nome completo"
               />
@@ -59,7 +74,13 @@ function VolunteerRegistrationPage() {
               <input
                 type="email"
                 id="email"
-                {...register('email')}
+                {...register('email', {
+                  required: 'Email é obrigatório',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Email inválido'
+                  }
+                })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Digite o email"
               />
@@ -101,7 +122,7 @@ function VolunteerRegistrationPage() {
               <input
                 type="date"
                 id="entryDate"
-                {...register('entryDate')}
+                {...register('entryDate', { required: 'Data de entrada é obrigatória' })}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
               {errors.entryDate && (
