@@ -4,7 +4,9 @@ interface VolunteerFormData {
   name: string;
   email: string;
   phone?: string;
+  isAcademic: boolean;
   course?: string;
+  ra?: string;
   entryDate: string;
 }
 
@@ -27,6 +29,10 @@ function VolunteerRegistrationPage() {
     }
     if (!data.entryDate) {
       alert('Data de entrada é obrigatória');
+      return;
+    }
+    if (data.isAcademic === undefined) {
+      alert('Por favor, indique se é acadêmico');
       return;
     }
 
@@ -112,6 +118,45 @@ function VolunteerRegistrationPage() {
                 {...register('course')}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Digite o curso"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="isAcademic" className="block text-sm font-medium text-gray-700">
+                É acadêmico?
+              </label>
+              <div className="mt-1">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    {...register('isAcademic', { required: true })}
+                    value="true"
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2">Sim</span>
+                </label>
+                <label className="inline-flex items-center ml-6">
+                  <input
+                    type="radio"
+                    {...register('isAcademic', { required: true })}
+                    value="false"
+                    className="form-radio h-4 w-4 text-blue-600"
+                  />
+                  <span className="ml-2">Não</span>
+                </label>
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="ra" className="block text-sm font-medium text-gray-700">
+                RA (Registro Acadêmico)
+              </label>
+              <input
+                type="text"
+                id="ra"
+                {...register('ra')}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Digite o registro acadêmico"
               />
             </div>
 

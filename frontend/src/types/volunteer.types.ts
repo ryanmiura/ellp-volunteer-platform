@@ -6,6 +6,7 @@ export interface Volunteer {
   isAcademic: boolean;
   course?: string;
   ra?: string;
+  entryDate: Date;
   createdAt: Date;
   updatedAt: Date;
 }

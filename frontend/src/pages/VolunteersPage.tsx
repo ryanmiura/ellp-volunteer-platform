@@ -14,6 +14,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Engenharia de Computação',
     ra: '123456',
+    entryDate: new Date('2024-01-10'),
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15')
   },
@@ -25,6 +26,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Psicologia',
     ra: '234567',
+    entryDate: new Date('2024-01-20'),
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01')
   },
@@ -34,6 +36,7 @@ const mockVolunteers: Volunteer[] = [
     email: 'pedro.oliveira@email.com',
     phone: '(11) 77777-7777',
     isAcademic: false,
+    entryDate: new Date('2024-02-10'),
     createdAt: new Date('2024-02-15'),
     updatedAt: new Date('2024-02-15')
   },
@@ -45,6 +48,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Medicina',
     ra: '345678',
+    entryDate: new Date('2024-02-25'),
     createdAt: new Date('2024-03-01'),
     updatedAt: new Date('2024-03-01')
   },
@@ -56,6 +60,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Direito',
     ra: '456789',
+    entryDate: new Date('2024-03-10'),
     createdAt: new Date('2024-03-15'),
     updatedAt: new Date('2024-03-15')
   },
@@ -65,6 +70,7 @@ const mockVolunteers: Volunteer[] = [
     email: 'fernanda.lima@email.com',
     phone: '(11) 44444-4444',
     isAcademic: false,
+    entryDate: new Date('2024-03-20'),
     createdAt: new Date('2024-04-01'),
     updatedAt: new Date('2024-04-01')
   },
@@ -76,6 +82,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Administração',
     ra: '567890',
+    entryDate: new Date('2024-04-05'),
     createdAt: new Date('2024-04-15'),
     updatedAt: new Date('2024-04-15')
   },
@@ -87,6 +94,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Educação Física',
     ra: '678901',
+    entryDate: new Date('2024-04-20'),
     createdAt: new Date('2024-05-01'),
     updatedAt: new Date('2024-05-01')
   }
