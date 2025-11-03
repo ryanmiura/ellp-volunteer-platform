@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Volunteer } from '../types/volunteer.types';
 import viewIcon from '../assets/view-icon.svg';
 import editIcon from '../assets/edit-icon.svg';
@@ -13,6 +14,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Engenharia de Computação',
     ra: '123456',
+    entryDate: new Date('2024-01-10'),
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15')
   },
@@ -24,6 +26,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Psicologia',
     ra: '234567',
+    entryDate: new Date('2024-01-20'),
     createdAt: new Date('2024-02-01'),
     updatedAt: new Date('2024-02-01')
   },
@@ -33,6 +36,7 @@ const mockVolunteers: Volunteer[] = [
     email: 'pedro.oliveira@email.com',
     phone: '(11) 77777-7777',
     isAcademic: false,
+    entryDate: new Date('2024-02-10'),
     createdAt: new Date('2024-02-15'),
     updatedAt: new Date('2024-02-15')
   },
@@ -44,6 +48,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Medicina',
     ra: '345678',
+    entryDate: new Date('2024-02-25'),
     createdAt: new Date('2024-03-01'),
     updatedAt: new Date('2024-03-01')
   },
@@ -55,6 +60,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Direito',
     ra: '456789',
+    entryDate: new Date('2024-03-10'),
     createdAt: new Date('2024-03-15'),
     updatedAt: new Date('2024-03-15')
   },
@@ -64,6 +70,7 @@ const mockVolunteers: Volunteer[] = [
     email: 'fernanda.lima@email.com',
     phone: '(11) 44444-4444',
     isAcademic: false,
+    entryDate: new Date('2024-03-20'),
     createdAt: new Date('2024-04-01'),
     updatedAt: new Date('2024-04-01')
   },
@@ -75,6 +82,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Administração',
     ra: '567890',
+    entryDate: new Date('2024-04-05'),
     createdAt: new Date('2024-04-15'),
     updatedAt: new Date('2024-04-15')
   },
@@ -86,6 +94,7 @@ const mockVolunteers: Volunteer[] = [
     isAcademic: true,
     course: 'Educação Física',
     ra: '678901',
+    entryDate: new Date('2024-04-20'),
     createdAt: new Date('2024-05-01'),
     updatedAt: new Date('2024-05-01')
   }
@@ -96,6 +105,7 @@ function VolunteersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   const filteredVolunteers = volunteers.filter(volunteer =>
     volunteer.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -126,8 +136,18 @@ function VolunteersPage() {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900">Voluntários</h1>
-        <p className="text-gray-600 mt-2">Gerencie os voluntários da plataforma</p>
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Voluntários</h1>
+            <p className="text-gray-600 mt-2">Gerencie os voluntários da plataforma</p>
+          </div>
+          <button
+            onClick={() => navigate('/volunteers/register')}
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          >
+            Cadastrar Voluntário
+          </button>
+        </div>
       </div>
 
       <div className="mb-4">
