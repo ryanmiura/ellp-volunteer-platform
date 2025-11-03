@@ -90,12 +90,33 @@ const mockVolunteers: Volunteer[] = [
 
 function VolunteersPage() {
   const [volunteers] = useState<Volunteer[]>(mockVolunteers);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredVolunteers = volunteers.filter(volunteer =>
+    volunteer.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="p-6">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-gray-900">Voluntários</h1>
         <p className="text-gray-600 mt-2">Gerencie os voluntários da plataforma</p>
+      </div>
+
+      <div className="mb-4">
+        <div className="max-w-md">
+          <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+            Buscar por nome
+          </label>
+          <input
+            type="text"
+            id="search"
+            className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            placeholder="Digite o nome do voluntário..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="bg-white shadow rounded-lg">
@@ -125,7 +146,7 @@ function VolunteersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {volunteers.map((volunteer) => (
+                {filteredVolunteers.map((volunteer) => (
                   <tr key={volunteer.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {volunteer.name}
