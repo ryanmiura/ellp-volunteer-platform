@@ -60,7 +60,10 @@ As seguintes tecnologias foram selecionadas para o desenvolvimento do projeto:
 Para garantir a qualidade do software, a estratégia será focada em testes de unidade automatizados.
 
 * **Testes de Unidade (Backend):** As funções de lógica de negócio em Go serão testadas de forma isolada utilizando o pacote nativo `testing`.
-* **Testes de Unidade (Frontend):** Os componentes React serão testados individualmente com **Jest** para validar seu comportamento.
+* **Testes de Unidade (Frontend):** Os componentes React serão testados individualmente com **Vitest** e **React Testing Library** para validar seu comportamento.
+  - **Total de Testes Implementados:** 54 testes automatizados
+  - **Componentes Testados:** Button, Input, FeatureCard, InfoCard
+  - **Páginas Testadas:** Dashboard, Login, Volunteers, VolunteerRegistration, Workshops
 
 ### Fluxo de Trabalho e Automação (CI)
 
@@ -69,6 +72,8 @@ Adotaremos o seguinte fluxo de trabalho para o desenvolvimento, utilizando o Git
 2.  Após o desenvolvimento, um **Pull Request (PR)** será aberto no GitHub para mesclar as alterações.
 3.  A abertura do PR acionará automaticamente o **GitHub Actions**, que executará todos os testes de unidade do projeto.
 4.  O PR só será mesclado se todos os testes passarem, garantindo a integridade e a qualidade do código na `branch` principal.
+
+**📚 Documentação Detalhada:** Para mais informações sobre a configuração do CI/CD e como os testes funcionam, consulte [.github/CI-CD.md](.github/CI-CD.md)
 
 ## 6. Cronograma de Desenvolvimento
 
