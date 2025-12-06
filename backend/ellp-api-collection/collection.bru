@@ -1,0 +1,29 @@
+script:pre-request {
+  const axios = require('axios');
+  
+  // Credenciais de login 
+  const loginData = {
+    email: "teste@gmail.com",
+    password: "Teste123"
+  };
+  
+  // Faz login e obtém o token
+  const loginUrl = "http://localhost:8080/api/auth/login";
+  
+  try {
+    const response = await axios.post(loginUrl, loginData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (response.data && response.data.token) {
+      // Salva o token na variável de ambiente
+      bru.setEnvVar("token", response.data.token);
+      console.log("✓ Token atualizado com sucesso");
+    }
+  } catch (error) {
+    console.log("✗ Erro ao fazer login:", error.message);
+    console.log("Continuando com o token existente...");
+  }
+}
