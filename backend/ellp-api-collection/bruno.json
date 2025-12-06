@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "ellp-api-colletion",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}
