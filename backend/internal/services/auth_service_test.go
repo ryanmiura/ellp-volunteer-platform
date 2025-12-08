@@ -14,12 +14,12 @@ import (
 
 // MockUserRepository é um mock do repositório de usuários para testes
 type MockUserRepository struct {
-	users        map[string]*models.User
-	emailToID    map[string]string
-	createError  error
-	findError    error
-	updateError  error
-	deleteError  error
+	users       map[string]*models.User
+	emailToID   map[string]string
+	createError error
+	findError   error
+	updateError error
+	deleteError error
 }
 
 func NewMockUserRepository() *MockUserRepository {
@@ -213,7 +213,7 @@ func TestAuthService_Login(t *testing.T) {
 				return
 			}
 
-			if response.Token == "" {
+			if response.AccessToken == "" {
 				t.Error("Login() returned empty token")
 			}
 
@@ -350,7 +350,7 @@ func TestAuthService_ValidateToken(t *testing.T) {
 	mockRepo.Create(ctx, testUser)
 
 	loginResponse, _ := service.Login(ctx, "test@example.com", "TestPassword123")
-	validToken := loginResponse.Token
+	validToken := loginResponse.AccessToken
 
 	tests := []struct {
 		name    string
@@ -418,7 +418,7 @@ func TestAuthService_RefreshToken(t *testing.T) {
 	mockRepo.Create(ctx, testUser)
 
 	loginResponse, _ := service.Login(ctx, "test@example.com", "TestPassword123")
-	validToken := loginResponse.Token
+	validToken := loginResponse.AccessToken
 
 	// Testa refresh com token válido
 	newToken, err := service.RefreshToken(validToken)
