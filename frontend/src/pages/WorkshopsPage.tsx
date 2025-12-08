@@ -54,80 +54,87 @@ const mockVolunteers: Volunteer[] = [
     name: 'João Silva',
     email: 'joao.silva@email.com',
     phone: '(11) 99999-9999',
-    isAcademic: true,
+    is_academic: true,
     course: 'Engenharia de Computação',
     ra: '123456',
-    entryDate: new Date('2024-01-10'),
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
+    entry_date: '2024-01-10',
+    is_active: true,
+    created_at: '2024-01-15',
+    updated_at: '2024-01-15'
   },
   {
     id: '2',
     name: 'Maria Santos',
     email: 'maria.santos@email.com',
     phone: '(11) 88888-8888',
-    isAcademic: true,
+    is_academic: true,
     course: 'Psicologia',
     ra: '234567',
-    entryDate: new Date('2024-01-20'),
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-01')
+    entry_date: '2024-01-20',
+    is_active: true,
+    created_at: '2024-02-01',
+    updated_at: '2024-02-01'
   },
   {
     id: '3',
     name: 'Pedro Oliveira',
     email: 'pedro.oliveira@email.com',
     phone: '(11) 77777-7777',
-    isAcademic: false,
-    entryDate: new Date('2024-02-10'),
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
+    is_academic: false,
+    entry_date: '2024-02-10',
+    is_active: true,
+    created_at: '2024-02-15',
+    updated_at: '2024-02-15'
   },
   {
     id: '4',
     name: 'Ana Costa',
     email: 'ana.costa@email.com',
     phone: '(11) 66666-6666',
-    isAcademic: true,
+    is_academic: true,
     course: 'Medicina',
     ra: '345678',
-    entryDate: new Date('2024-02-25'),
-    createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-01')
+    entry_date: '2024-02-25',
+    is_active: true,
+    created_at: '2024-03-01',
+    updated_at: '2024-03-01'
   },
   {
     id: '5',
     name: 'Carlos Rodrigues',
     email: 'carlos.rodrigues@email.com',
     phone: '(11) 55555-5555',
-    isAcademic: true,
+    is_academic: true,
     course: 'Direito',
     ra: '456789',
-    entryDate: new Date('2024-03-10'),
-    createdAt: new Date('2024-03-15'),
-    updatedAt: new Date('2024-03-15')
+    entry_date: '2024-03-10',
+    is_active: true,
+    created_at: '2024-03-15',
+    updated_at: '2024-03-15'
   },
   {
     id: '6',
     name: 'Fernanda Lima',
     email: 'fernanda.lima@email.com',
     phone: '(11) 44444-4444',
-    isAcademic: false,
-    entryDate: new Date('2024-03-20'),
-    createdAt: new Date('2024-04-01'),
-    updatedAt: new Date('2024-04-01')
+    is_academic: false,
+    entry_date: '2024-03-20',
+    is_active: true,
+    created_at: '2024-04-01',
+    updated_at: '2024-04-01'
   },
   {
     id: '7',
     name: 'Lucas Pereira',
     email: 'lucas.pereira@email.com',
     phone: '(11) 33333-3333',
-    isAcademic: true,
+    is_academic: true,
     course: 'Administração',
     ra: '567890',
-    entryDate: new Date('2024-04-05'),
-    createdAt: new Date('2024-04-15'),
-    updatedAt: new Date('2024-04-15')
+    entry_date: '2024-04-05',
+    is_active: true,
+    created_at: '2024-04-15',
+    updated_at: '2024-04-15'
   }
 ];
 

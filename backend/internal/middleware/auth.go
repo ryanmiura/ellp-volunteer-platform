@@ -2,14 +2,69 @@ package middleware
 
 import (
 	"ellp-volunter-platform/backend/internal/config"
+	"ellp-volunter-platform/backend/internal/repositories"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
-// AuthMiddleware valida o token JWT nas requisições
-func AuthMiddleware() gin.HandlerFunc {
+// AuthMiddleware é a estrutura que gerencia autenticação
+type AuthMiddleware struct {
+	userRepo repositories.UserRepository
+}
+
+// NewAuthMiddleware cria uma nova instância do middleware de autenticação
+func NewAuthMiddleware(userRepo repositories.UserRepository) *AuthMiddleware {
+	return &AuthMiddleware{
+		userRepo: userRepo,
+	}
+}
+
+// RequireAuth retorna um middleware que valida o token JWT nas requisições
+func (am *AuthMiddleware) RequireAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Token não fornecido",
+			})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Formato de token inválido. Use: Bearer <token>",
+			})
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+
+		claims, err := config.ValidateToken(tokenString)
+		if err != nil {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Token inválido ou expirado",
+			})
+			c.Abort()
+			return
+		}
+
+		// Adiciona as claims ao contexto para uso posterior
+		c.Set("claims", claims)
+		c.Set("user_id", claims.UserID)
+		c.Set("user_email", claims.Email)
+		c.Set("user_role", claims.Role)
+
+		c.Next()
+	}
+}
+
+// AuthMiddlewareFunc é uma função helper que valida o token JWT - DEPRECATED: use RequireAuth() method
+func AuthMiddlewareFunc() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
