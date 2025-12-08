@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Volunteer } from '../types/volunteer.types';
 import { volunteersService } from '../services/volunteers.service';
+import { pdfService } from '../services/pdf.service';
 import viewIcon from '../assets/view-icon.svg';
 import editIcon from '../assets/edit-icon.svg';
 import trashIcon from '../assets/trash-icon.svg';
@@ -75,6 +76,24 @@ function VolunteersPage() {
         console.error('Erro ao inativar voluntário:', err);
         alert('Erro ao inativar voluntário. Tente novamente.');
       }
+    }
+  };
+
+  const handleDownloadCertificate = async (volunteer: Volunteer) => {
+    try {
+      await pdfService.generateParticipationCertificate(volunteer);
+    } catch (err) {
+      console.error('Erro ao gerar certificado:', err);
+      alert('Erro ao gerar certificado. Tente novamente.');
+    }
+  };
+
+  const handleDownloadReport = async (volunteer: Volunteer) => {
+    try {
+      await pdfService.generateParticipationReport(volunteer);
+    } catch (err) {
+      console.error('Erro ao gerar relatório:', err);
+      alert('Erro ao gerar relatório. Tente novamente.');
     }
   };
 
@@ -190,13 +209,31 @@ function VolunteersPage() {
                       {volunteer.ra || '-'}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium w-32">
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-1">
                         <button
                           onClick={() => handleView(volunteer)}
                           className="w-8 h-8 text-blue-600 hover:text-blue-900 p-1 rounded flex items-center justify-center"
                           title="Visualizar"
                         >
                           <img src={viewIcon} alt="Visualizar" className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDownloadCertificate(volunteer)}
+                          className="w-8 h-8 text-green-600 hover:text-green-900 p-1 rounded flex items-center justify-center"
+                          title="Baixar Certificado"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDownloadReport(volunteer)}
+                          className="w-8 h-8 text-orange-600 hover:text-orange-900 p-1 rounded flex items-center justify-center"
+                          title="Baixar Relatório"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
                         </button>
                         <button
                           onClick={() => handleEdit(volunteer)}

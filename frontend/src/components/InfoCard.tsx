@@ -6,11 +6,17 @@ interface InfoCardProps {
   icon: ReactNode;
   iconBgColor: string;
   iconColor: string;
+  onButtonClick?: () => void;
 }
 
-function InfoCard({ title, description, icon, iconBgColor, iconColor }: InfoCardProps) {
+function InfoCard({ title, description, icon, iconBgColor, iconColor, onButtonClick }: InfoCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 text-center">
+    <div 
+      className={`bg-white rounded-lg shadow-md p-6 text-center transition-all duration-300 ${
+        onButtonClick ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : ''
+      }`}
+      onClick={onButtonClick}
+    >
       <div className={`w-16 h-16 ${iconBgColor} rounded-full flex items-center justify-center mx-auto mb-4`}>
         <div className={iconColor}>
           {icon}

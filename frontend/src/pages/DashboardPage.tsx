@@ -62,6 +62,7 @@ function DashboardPage() {
           }
           iconBgColor="bg-purple-100"
           iconColor="text-purple-600"
+          onButtonClick={() => navigate('/volunteers/register')}
         />
         <InfoCard
           title="Busca Rápida"
@@ -73,6 +74,7 @@ function DashboardPage() {
           }
           iconBgColor="bg-yellow-100"
           iconColor="text-yellow-600"
+          onButtonClick={() => navigate('/volunteers')}
         />
         <InfoCard
           title="Histórico Completo"
@@ -84,6 +86,7 @@ function DashboardPage() {
           }
           iconBgColor="bg-red-100"
           iconColor="text-red-600"
+          onButtonClick={() => navigate('/volunteers')}
         />
       </div>
       <div className="bg-white rounded-lg shadow-md p-8">
