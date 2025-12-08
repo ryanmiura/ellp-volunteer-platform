@@ -1,8 +1,7 @@
-import React, { createContext, useState, useEffect, type ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
+import { AuthContext } from './authContext';
 import { authService } from '../../services/auth.service';
 import type { User, AuthContextType } from '../../types/auth.types';
-
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
   children: ReactNode;
