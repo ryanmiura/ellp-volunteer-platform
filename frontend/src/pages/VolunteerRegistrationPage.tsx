@@ -1,52 +1,49 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-
-interface VolunteerFormData {
-  name: string;
-  email: string;
-  phone?: string;
-  isAcademic: boolean;
-  course?: string;
-  ra?: string;
-  entryDate: string;
-}
+import { useState } from 'react';
+import { volunteersService } from '../services/volunteers.service';
+import type { VolunteerFormData } from '../types/volunteer.types';
 
 function VolunteerRegistrationPage() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<VolunteerFormData>();
 
-  const onSubmit = (data: VolunteerFormData) => {
-    // Validação simples
-    if (!data.name.trim()) {
-      alert('Nome é obrigatório');
-      return;
-    }
-    if (!data.email.trim()) {
-      alert('Email é obrigatório');
-      return;
-    }
-    if (!data.entryDate) {
-      alert('Data de entrada é obrigatória');
-      return;
-    }
-    if (data.isAcademic === undefined) {
-      alert('Por favor, indique se é acadêmico');
-      return;
-    }
+  const isAcademic = watch('isAcademic');
 
-    // Validação de email simples
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(data.email)) {
-      alert('Email inválido');
-      return;
-    }
+  const onSubmit = async (data: VolunteerFormData) => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    console.log('Dados do voluntário:', data);
-    alert('Voluntário cadastrado com sucesso!');
+      // Converte dados do formulário para formato da API
+      await volunteersService.create({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        is_academic: data.isAcademic,
+        course: data.isAcademic ? data.course : undefined,
+        ra: data.isAcademic ? data.ra : undefined,
+        entry_date: data.entryDate,
+      });
+
+      alert('Voluntário cadastrado com sucesso!');
+      navigate('/volunteers');
+    } catch (err: any) {
+      console.error('Erro ao cadastrar voluntário:', err);
+      const errorMessage = err.response?.data?.error || 'Erro ao cadastrar voluntário. Tente novamente.';
+      setError(errorMessage);
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -112,26 +109,32 @@ function VolunteerRegistrationPage() {
 
             <div>
               <label htmlFor="course" className="block text-sm font-medium text-gray-700">
-                Curso
+                Curso {isAcademic && '*'}
               </label>
               <input
                 type="text"
                 id="course"
-                {...register('course')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                {...register('course', {
+                  required: isAcademic ? 'Curso é obrigatório para acadêmicos' : false
+                })}
+                disabled={!isAcademic}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="Digite o curso"
               />
+              {errors.course && (
+                <p className="mt-1 text-sm text-red-600">{errors.course.message}</p>
+              )}
             </div>
 
             <div>
               <label htmlFor="isAcademic" className="block text-sm font-medium text-gray-700">
-                É acadêmico?
+                É acadêmico? *
               </label>
               <div className="mt-1">
                 <label className="inline-flex items-center">
                   <input
                     type="radio"
-                    {...register('isAcademic', { required: true })}
+                    {...register('isAcademic', { required: 'Campo obrigatório' })}
                     value="true"
                     className="form-radio h-4 w-4 text-blue-600"
                   />
@@ -140,26 +143,35 @@ function VolunteerRegistrationPage() {
                 <label className="inline-flex items-center ml-6">
                   <input
                     type="radio"
-                    {...register('isAcademic', { required: true })}
+                    {...register('isAcademic', { required: 'Campo obrigatório' })}
                     value="false"
                     className="form-radio h-4 w-4 text-blue-600"
                   />
                   <span className="ml-2">Não</span>
                 </label>
               </div>
+              {errors.isAcademic && (
+                <p className="mt-1 text-sm text-red-600">{errors.isAcademic.message}</p>
+              )}
             </div>
 
             <div>
               <label htmlFor="ra" className="block text-sm font-medium text-gray-700">
-                RA (Registro Acadêmico)
+                RA (Registro Acadêmico) {isAcademic && '*'}
               </label>
               <input
                 type="text"
                 id="ra"
-                {...register('ra')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                {...register('ra', {
+                  required: isAcademic ? 'RA é obrigatório para acadêmicos' : false
+                })}
+                disabled={!isAcademic}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
                 placeholder="Digite o registro acadêmico"
               />
+              {errors.ra && (
+                <p className="mt-1 text-sm text-red-600">{errors.ra.message}</p>
+              )}
             </div>
 
             <div>
@@ -181,20 +193,28 @@ function VolunteerRegistrationPage() {
               <button
                 type="button"
                 onClick={() => navigate('/volunteers')}
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={loading}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                disabled={loading}
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Cadastrar
+                {loading ? 'Cadastrando...' : 'Cadastrar'}
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {error && (
+        <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-4">
+          <p className="text-red-800">{error}</p>
+        </div>
+      )}
     </div>
   );
 }
