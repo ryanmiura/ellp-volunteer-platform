@@ -1,15 +1,26 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import Button from './Button'
+import { useAuth } from '../hooks/useAuth'
 
 function Layout() {
   const location = useLocation()
   const navigate = useNavigate()
+  const { user, logout, isAuthenticated } = useAuth()
 
   const navigation = [
     { name: 'Painel', path: '/dashboard' },
     { name: 'Voluntários', path: '/volunteers' },
     { name: 'Oficinas', path: '/workshops' },
   ]
+
+  const handleLogout = async () => {
+    try {
+      await logout()
+      navigate('/login')
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-200 via-blue-100 to-indigo-200">
@@ -39,14 +50,29 @@ function Layout() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center">
-              <Button
-                variant="primary"
-                onClick={() => navigate('/login')}
-                className="text-sm"
-              >
-                Login
-              </Button>
+            <div className="flex items-center space-x-4">
+              {isAuthenticated && user && (
+                <span className="text-sm text-gray-700">
+                  Olá, <span className="font-medium">{user.name}</span>
+                </span>
+              )}
+              {isAuthenticated ? (
+                <Button
+                  variant="primary"
+                  onClick={handleLogout}
+                  className="text-sm"
+                >
+                  Sair
+                </Button>
+              ) : (
+                <Button
+                  variant="primary"
+                  onClick={() => navigate('/login')}
+                  className="text-sm"
+                >
+                  Login
+                </Button>
+              )}
             </div>
           </div>
         </div>
