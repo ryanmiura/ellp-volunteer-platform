@@ -294,37 +294,3 @@ function LoginPage() {
 }
 
 export default LoginPage;
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={forgotPasswordEmail}
-                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                />
-                <div className="flex gap-3 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    fullWidth
-                    onClick={() => changeView('login')}
-                  >
-                    Voltar
-                  </Button>
-                  <Button type="submit" fullWidth>
-                    Enviar
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )}
-          </div>
-          
-          {/* Footer */}
-          <p className="text-center text-sm text-gray-500 mt-6">
-            © 2025 ELLP - Plataforma de Voluntários
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default LoginPage;
