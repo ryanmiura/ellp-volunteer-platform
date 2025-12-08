@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Workshop } from '../types/workshop.types';
+import type { Workshop, CreateWorkshopRequest, UpdateWorkshopRequest } from '../types/workshop.types';
 import type { Volunteer } from '../types/volunteer.types';
 import { workshopsService } from '../services/workshops.service';
 import { volunteersService } from '../services/volunteers.service';

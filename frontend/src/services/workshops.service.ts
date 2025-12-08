@@ -9,13 +9,13 @@ import type {
 export const workshopsService = {
   // Criar oficina
   async create(data: CreateWorkshopRequest): Promise<Workshop> {
-    const response = await api.post<Workshop>('/workshops', data);
+    const response = await api.post<Workshop>('/api/workshops', data);
     return response.data;
   },
 
   // Buscar oficina por ID
   async getById(id: string): Promise<Workshop> {
-    const response = await api.get<Workshop>(`/workshops/${id}`);
+    const response = await api.get<Workshop>(`/api/workshops/${id}`);
     return response.data;
   },
 
@@ -29,34 +29,34 @@ export const workshopsService = {
     if (filters?.page) params.append('page', String(filters.page));
     if (filters?.limit) params.append('limit', String(filters.limit));
 
-    const response = await api.get<Workshop[]>(`/workshops?${params.toString()}`);
+    const response = await api.get<Workshop[]>(`/api/workshops?${params.toString()}`);
     return response.data;
   },
 
   // Atualizar oficina
   async update(id: string, data: UpdateWorkshopRequest): Promise<Workshop> {
-    const response = await api.put<Workshop>(`/workshops/${id}`, data);
+    const response = await api.put<Workshop>(`/api/workshops/${id}`, data);
     return response.data;
   },
 
   // Deletar oficina
   async delete(id: string): Promise<void> {
-    await api.delete(`/workshops/${id}`);
+    await api.delete(`/api/workshops/${id}`);
   },
 
   // Adicionar voluntário à oficina
   async addVolunteer(workshopId: string, volunteerId: string): Promise<void> {
-    await api.post(`/workshops/${workshopId}/volunteers/${volunteerId}`);
+    await api.post(`/api/workshops/${workshopId}/volunteers/${volunteerId}`);
   },
 
   // Remover voluntário da oficina
   async removeVolunteer(workshopId: string, volunteerId: string): Promise<void> {
-    await api.delete(`/workshops/${workshopId}/volunteers/${volunteerId}`);
+    await api.delete(`/api/workshops/${workshopId}/volunteers/${volunteerId}`);
   },
 
   // Buscar oficinas de um voluntário
   async getByVolunteer(volunteerId: string): Promise<Workshop[]> {
-    const response = await api.get<Workshop[]>(`/volunteers/${volunteerId}/workshops`);
+    const response = await api.get<Workshop[]>(`/api/volunteers/${volunteerId}/workshops`);
     return response.data;
   },
 };

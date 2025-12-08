@@ -1,4 +1,4 @@
-import { api } from './api';
+import api from './api';
 import type { Volunteer, VolunteerFormData } from '../types/volunteer.types';
 
 export const volunteersService = {
