@@ -27,12 +27,15 @@ func main() {
 
 	// Inicializar repositórios
 	userRepo := repositories.NewMongoUserRepository(db)
+	volunteerRepo := repositories.NewMongoVolunteerRepository(db)
 
 	// Inicializar serviços
 	authService := services.NewAuthService(userRepo)
+	volunteerService := services.NewVolunteerService(volunteerRepo)
 
 	// Inicializar handlers
 	authHandler := handlers.NewAuthHandler(authService)
+	volunteerHandler := handlers.NewVolunteerHandler(volunteerService)
 
 	// Configurar router
 	r := gin.Default()
@@ -41,8 +44,14 @@ func main() {
 	r.Use(middleware.CORSMiddleware())
 	r.Use(middleware.LoggingMiddleware())
 
+	// Inicializar middleware de autenticação
+	authMiddleware := middleware.NewAuthMiddleware(userRepo)
+
 	// Rotas de auth
 	routes.SetupAuthRoutes(r, authHandler)
+
+	// Rotas de voluntários
+	routes.SetupVolunteerRoutes(r, volunteerHandler, authMiddleware)
 
 
 	// Iniciar servidor
