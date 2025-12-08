@@ -1,34 +1,40 @@
 export interface Workshop {
   id: string;
   name: string;
-  date: Date;
+  date: string;
   description?: string;
-  volunteers: string[]; // Array of volunteer IDs
-  createdAt: Date;
-  updatedAt: Date;
+  volunteers: string[];
+  created_at: string;
+  updated_at: string;
 }
 
-// API Response Types
-export interface WorkshopResponse {
-  workshop: Workshop;
+// Request Types
+export interface CreateWorkshopRequest {
+  name: string;
+  date: string;
+  description?: string;
 }
 
-export interface WorkshopsListResponse {
-  workshops: Workshop[];
-  total: number;
-  page: number;
-  limit: number;
+export interface UpdateWorkshopRequest {
+  name?: string;
+  date?: string;
+  description?: string;
+}
+
+// Filter Types
+export interface WorkshopFilter {
+  name?: string;
+  month?: string; // Format: YYYY-MM
+  year?: string;  // Format: YYYY
+  page?: number;
+  limit?: number;
 }
 
 // Form Types
 export interface WorkshopFormData {
   name: string;
-  date: Date;
+  date: string;
   description?: string;
-}
-
-export interface UpdateWorkshopForm extends Partial<WorkshopFormData> {
-  id: string;
 }
 
 // Validation Types
@@ -36,13 +42,4 @@ export interface WorkshopFormErrors {
   name?: string;
   date?: string;
   description?: string;
-}
-
-// Detailed workshop with volunteer information
-export interface WorkshopWithVolunteers extends Omit<Workshop, 'volunteers'> {
-  volunteers: Array<{
-    id: string;
-    name: string;
-    email: string;
-  }>;
 }

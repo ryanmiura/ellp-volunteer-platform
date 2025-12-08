@@ -1,138 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Workshop } from '../types/workshop.types';
 import type { Volunteer } from '../types/volunteer.types';
+import { workshopsService } from '../services/workshops.service';
+import { volunteersService } from '../services/volunteers.service';
 import Button from '../components/Button';
 import Modal from '../components/Modal';
 import viewIcon from '../assets/view-icon.svg';
 import editIcon from '../assets/edit-icon.svg';
 import trashIcon from '../assets/trash-icon.svg';
 
-// Mock data for workshops
-const mockWorkshops: Workshop[] = [
-  {
-    id: '1',
-    name: 'Introdução à Programação',
-    date: new Date('2024-01-15'),
-    description: 'Oficina básica de programação para iniciantes',
-    volunteers: ['1', '2'],
-    createdAt: new Date('2024-01-01'),
-    updatedAt: new Date('2024-01-01')
-  },
-  {
-    id: '2',
-    name: 'Lógica de Programação',
-    date: new Date('2024-02-10'),
-    description: 'Conceitos fundamentais de lógica aplicados à programação',
-    volunteers: ['2', '3', '4'],
-    createdAt: new Date('2024-01-20'),
-    updatedAt: new Date('2024-01-20')
-  },
-  {
-    id: '3',
-    name: 'Desenvolvimento Web',
-    date: new Date('2024-03-05'),
-    description: 'Criação de sites e aplicações web',
-    volunteers: ['1', '5'],
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
-  },
-  {
-    id: '4',
-    name: 'Estruturas de Dados',
-    date: new Date('2024-04-12'),
-    description: 'Conceitos avançados de estruturas de dados',
-    volunteers: ['3', '6', '7'],
-    createdAt: new Date('2024-03-20'),
-    updatedAt: new Date('2024-03-20')
-  }
-];
-
-// Mock volunteers data (simplified)
-const mockVolunteers: Volunteer[] = [
-  {
-    id: '1',
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
-    phone: '(11) 99999-9999',
-    isAcademic: true,
-    course: 'Engenharia de Computação',
-    ra: '123456',
-    entryDate: new Date('2024-01-10'),
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: '2',
-    name: 'Maria Santos',
-    email: 'maria.santos@email.com',
-    phone: '(11) 88888-8888',
-    isAcademic: true,
-    course: 'Psicologia',
-    ra: '234567',
-    entryDate: new Date('2024-01-20'),
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-01')
-  },
-  {
-    id: '3',
-    name: 'Pedro Oliveira',
-    email: 'pedro.oliveira@email.com',
-    phone: '(11) 77777-7777',
-    isAcademic: false,
-    entryDate: new Date('2024-02-10'),
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
-  },
-  {
-    id: '4',
-    name: 'Ana Costa',
-    email: 'ana.costa@email.com',
-    phone: '(11) 66666-6666',
-    isAcademic: true,
-    course: 'Medicina',
-    ra: '345678',
-    entryDate: new Date('2024-02-25'),
-    createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-01')
-  },
-  {
-    id: '5',
-    name: 'Carlos Rodrigues',
-    email: 'carlos.rodrigues@email.com',
-    phone: '(11) 55555-5555',
-    isAcademic: true,
-    course: 'Direito',
-    ra: '456789',
-    entryDate: new Date('2024-03-10'),
-    createdAt: new Date('2024-03-15'),
-    updatedAt: new Date('2024-03-15')
-  },
-  {
-    id: '6',
-    name: 'Fernanda Lima',
-    email: 'fernanda.lima@email.com',
-    phone: '(11) 44444-4444',
-    isAcademic: false,
-    entryDate: new Date('2024-03-20'),
-    createdAt: new Date('2024-04-01'),
-    updatedAt: new Date('2024-04-01')
-  },
-  {
-    id: '7',
-    name: 'Lucas Pereira',
-    email: 'lucas.pereira@email.com',
-    phone: '(11) 33333-3333',
-    isAcademic: true,
-    course: 'Administração',
-    ra: '567890',
-    entryDate: new Date('2024-04-05'),
-    createdAt: new Date('2024-04-15'),
-    updatedAt: new Date('2024-04-15')
-  }
-];
-
 function WorkshopsPage() {
-  const [workshops, setWorkshops] = useState<Workshop[]>(mockWorkshops);
+  const [workshops, setWorkshops] = useState<Workshop[]>([]);
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -146,8 +27,42 @@ function WorkshopsPage() {
     description: ''
   });
   const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+  const [submitting, setSubmitting] = useState(false);
 
   const itemsPerPage = 5;
+
+  // Carrega oficinas e voluntários ao montar o componente
+  useEffect(() => {
+    loadWorkshops();
+    loadVolunteers();
+  }, []);
+
+  const loadWorkshops = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await workshopsService.getAll();
+      setWorkshops(data);
+    } catch (err) {
+      console.error('Erro ao carregar oficinas:', err);
+      setError('Erro ao carregar oficinas. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadVolunteers = async () => {
+    try {
+      const data = await volunteersService.getAll();
+      setVolunteers(data);
+    } catch (err) {
+      console.error('Erro ao carregar voluntários:', err);
+    }
+  };
+
+  const getVolunteersByIds = (volunteerIds: string[]) => {
+    return volunteers.filter(volunteer => volunteerIds.includes(volunteer.id));
+  };
 
   const filteredWorkshops = workshops.filter(workshop =>
     workshop.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -156,10 +71,6 @@ function WorkshopsPage() {
   const totalPages = Math.ceil(filteredWorkshops.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedWorkshops = filteredWorkshops.slice(startIndex, startIndex + itemsPerPage);
-
-  const getVolunteersByIds = (volunteerIds: string[]) => {
-    return mockVolunteers.filter(volunteer => volunteerIds.includes(volunteer.id));
-  };
 
   const validateForm = () => {
     const errors: {[key: string]: string} = {};
@@ -185,48 +96,67 @@ function WorkshopsPage() {
     setFormErrors({});
   };
 
-  const handleCreateWorkshop = () => {
+  const handleCreateWorkshop = async () => {
     if (!validateForm()) return;
 
-    const newWorkshop: Workshop = {
-      id: Date.now().toString(),
-      name: formData.name,
-      date: new Date(formData.date),
-      description: formData.description,
-      volunteers: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+    setSubmitting(true);
+    setError(null);
 
-    setWorkshops([...workshops, newWorkshop]);
-    setShowCreateModal(false);
-    resetForm();
+    try {
+      const workshopData: CreateWorkshopRequest = {
+        name: formData.name,
+        date: formData.date,
+        description: formData.description
+      };
+
+      await workshopsService.create(workshopData);
+      await loadWorkshops();
+      setShowCreateModal(false);
+      resetForm();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao criar oficina');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleEditWorkshop = () => {
+  const handleEditWorkshop = async () => {
     if (!validateForm() || !selectedWorkshop) return;
 
-    const updatedWorkshops = workshops.map(workshop =>
-      workshop.id === selectedWorkshop.id
-        ? {
-            ...workshop,
-            name: formData.name,
-            date: new Date(formData.date),
-            description: formData.description,
-            updatedAt: new Date()
-          }
-        : workshop
-    );
+    setSubmitting(true);
+    setError(null);
 
-    setWorkshops(updatedWorkshops);
-    setShowEditModal(false);
-    resetForm();
-    setSelectedWorkshop(null);
+    try {
+      const workshopData: UpdateWorkshopRequest = {
+        name: formData.name,
+        date: formData.date,
+        description: formData.description
+      };
+
+      await workshopsService.update(selectedWorkshop.id, workshopData);
+      await loadWorkshops();
+      setShowEditModal(false);
+      resetForm();
+      setSelectedWorkshop(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atualizar oficina');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  const handleDeleteWorkshop = (workshop: Workshop) => {
-    if (confirm(`Tem certeza que deseja excluir a oficina "${workshop.name}"?`)) {
-      setWorkshops(workshops.filter(w => w.id !== workshop.id));
+  const handleDeleteWorkshop = async (workshop: Workshop) => {
+    if (!confirm(`Tem certeza que deseja excluir a oficina "${workshop.name}"?`)) {
+      return;
+    }
+
+    setError(null);
+
+    try {
+      await workshopsService.delete(workshop.id);
+      await loadWorkshops();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao excluir oficina');
     }
   };
 
@@ -239,7 +169,7 @@ function WorkshopsPage() {
     setSelectedWorkshop(workshop);
     setFormData({
       name: workshop.name,
-      date: workshop.date.toISOString().split('T')[0],
+      date: workshop.date,
       description: workshop.description || ''
     });
     setShowEditModal(true);
@@ -250,28 +180,36 @@ function WorkshopsPage() {
     setShowVolunteersModal(true);
   };
 
-  const handleToggleVolunteer = (volunteerId: string) => {
+  const handleToggleVolunteer = async (volunteerId: string) => {
     if (!selectedWorkshop) return;
 
-    const currentVolunteers = selectedWorkshop.volunteers || [];
-    const updatedVolunteers = currentVolunteers.includes(volunteerId)
-      ? currentVolunteers.filter(id => id !== volunteerId)
-      : [...currentVolunteers, volunteerId];
+    setError(null);
 
-    const updatedWorkshop = {
-      ...selectedWorkshop,
-      volunteers: updatedVolunteers,
-      updatedAt: new Date()
-    };
+    try {
+      const currentVolunteers = selectedWorkshop.volunteers || [];
+      const isRemoving = currentVolunteers.includes(volunteerId);
 
-    setWorkshops(workshops.map(w =>
-      w.id === selectedWorkshop.id ? updatedWorkshop : w
-    ));
-    setSelectedWorkshop(updatedWorkshop);
+      if (isRemoving) {
+        await workshopsService.removeVolunteer(selectedWorkshop.id, volunteerId);
+      } else {
+        await workshopsService.addVolunteer(selectedWorkshop.id, volunteerId);
+      }
+
+      await loadWorkshops();
+      
+      // Atualizar selectedWorkshop com dados mais recentes
+      const updatedWorkshop = workshops.find(w => w.id === selectedWorkshop.id);
+      if (updatedWorkshop) {
+        setSelectedWorkshop(updatedWorkshop);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atualizar voluntários');
+    }
   };
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('pt-BR');
+  const formatDate = (date: string) => {
+    const [year, month, day] = date.split('-');
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -291,7 +229,26 @@ function WorkshopsPage() {
         </div>
       </div>
 
-      <div className="mb-4">
+      {error && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative">
+          <span className="block sm:inline">{error}</span>
+          <button
+            className="absolute top-0 bottom-0 right-0 px-4 py-3"
+            onClick={() => setError(null)}
+          >
+            <span className="text-2xl">&times;</span>
+          </button>
+        </div>
+      )}
+
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+          <p className="mt-4 text-gray-600">Carregando oficinas...</p>
+        </div>
+      ) : (
+        <>
+          <div className="mb-4">
         <div className="max-w-md">
           <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
             Buscar por nome
@@ -432,6 +389,8 @@ function WorkshopsPage() {
           )}
         </div>
       </div>
+        </>
+      )}
 
       {/* Create Workshop Modal */}
       <Modal
@@ -505,11 +464,12 @@ function WorkshopsPage() {
                 setShowCreateModal(false);
                 resetForm();
               }}
+              disabled={submitting}
             >
               Cancelar
             </Button>
-            <Button type="submit">
-              Cadastrar
+            <Button type="submit" disabled={submitting}>
+              {submitting ? 'Cadastrando...' : 'Cadastrar'}
             </Button>
           </div>
         </form>
@@ -589,11 +549,12 @@ function WorkshopsPage() {
                 resetForm();
                 setSelectedWorkshop(null);
               }}
+              disabled={submitting}
             >
               Cancelar
             </Button>
-            <Button type="submit">
-              Salvar
+            <Button type="submit" disabled={submitting}>
+              {submitting ? 'Salvando...' : 'Salvar'}
             </Button>
           </div>
         </form>
@@ -665,7 +626,7 @@ function WorkshopsPage() {
 
             <div className="max-h-96 overflow-y-auto">
               <div className="space-y-2">
-                {mockVolunteers.map((volunteer) => (
+                {volunteers.map((volunteer) => (
                   <label
                     key={volunteer.id}
                     className="flex items-center p-3 border border-gray-200 rounded-md hover:bg-gray-50 cursor-pointer"
