@@ -1,11 +1,11 @@
 meta {
   name: Refresh Token
   type: http
-  seq: 2
+  seq: 4
 }
 
 post {
-  url: http://localhost:8080/api/auth/refresh
+  url: {{baseUrl}}/api/auth/refresh
   body: none
   auth: bearer
 }

@@ -1,11 +1,11 @@
 meta {
   name: Logout
   type: http
-  seq: 2
+  seq: 3
 }
 
 post {
-  url: http://localhost:8080/api/auth/logout
+  url: {{baseUrl}}/api/auth/logout
   body: none
   auth: inherit
 }
