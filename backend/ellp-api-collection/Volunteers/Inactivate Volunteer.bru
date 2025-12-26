@@ -1,0 +1,30 @@
+meta {
+  name: Inactivate Volunteer
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/volunteers/:id/inactivate
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "exit_date": "2023-12-31T23:59:59Z"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

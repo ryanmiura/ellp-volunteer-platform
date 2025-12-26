@@ -1,0 +1,31 @@
+meta {
+  name: Update Volunteer
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/volunteers/:id
+  body: json
+  auth: bearer
+}
+
+params:path {
+  id: 
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "João da Silva Sauro",
+    "phone": "11988888888"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

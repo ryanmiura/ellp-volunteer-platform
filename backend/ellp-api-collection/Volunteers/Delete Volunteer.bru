@@ -1,13 +1,17 @@
 meta {
-  name: Refresh Token
+  name: Delete Volunteer
   type: http
-  seq: 4
+  seq: 5
 }
 
-post {
-  url: {{baseUrl}}/api/auth/refresh
+delete {
+  url: {{baseUrl}}/api/volunteers/:id
   body: none
   auth: bearer
+}
+
+params:path {
+  id: 
 }
 
 auth:bearer {

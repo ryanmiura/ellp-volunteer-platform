@@ -1,11 +1,11 @@
 meta {
-  name: Refresh Token
+  name: List Volunteers
   type: http
-  seq: 4
+  seq: 2
 }
 
-post {
-  url: {{baseUrl}}/api/auth/refresh
+get {
+  url: {{baseUrl}}/api/volunteers
   body: none
   auth: bearer
 }
