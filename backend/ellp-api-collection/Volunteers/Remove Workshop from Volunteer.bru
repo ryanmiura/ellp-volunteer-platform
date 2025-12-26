@@ -1,0 +1,25 @@
+meta {
+  name: Remove Workshop from Volunteer
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{baseUrl}}/api/volunteers/:id/workshops/:workshop_id
+  body: none
+  auth: bearer
+}
+
+params:path {
+  id: 
+  workshop_id: 
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

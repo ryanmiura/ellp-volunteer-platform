@@ -1,0 +1,32 @@
+meta {
+  name: Create Volunteer
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/volunteers
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "name": "João da Silva",
+    "email": "joao.silva@example.com",
+    "phone": "11999999999",
+    "is_academic": true,
+    "course": "Sistemas de Informação",
+    "ra": "123456",
+    "entry_date": "2023-01-01T00:00:00Z"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
