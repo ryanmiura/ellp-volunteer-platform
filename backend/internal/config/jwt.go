@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	JWTSecret = []byte(getJWTSecret())
-	TokenExpiration = 24 * time.Hour
+	JWTSecret              = []byte(getJWTSecret())
+	TokenExpiration        = 24 * time.Hour
+	RefreshTokenExpiration = 7 * 24 * time.Hour
 )
 
 // informações contidas no token JWT
@@ -80,4 +81,26 @@ func RefreshToken(tokenString string) (string, error) {
 	}
 
 	return GenerateToken(claims.UserID, claims.Email, claims.Role)
+}
+
+// GenerateRefreshToken gera um token de refresh com expiração mais longa
+func GenerateRefreshToken(userID, email string) (string, error) {
+	claims := Claims{
+		UserID: userID,
+		Email:  email,
+		Role:   "refresh",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(RefreshTokenExpiration)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+			NotBefore: jwt.NewNumericDate(time.Now()),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(JWTSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

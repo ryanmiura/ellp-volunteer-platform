@@ -1,44 +1,50 @@
 import { useState } from 'react';
 import type { FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Input from '../components/Input';
 import Button from '../components/Button';
+import { useAuth } from '../hooks/useAuth';
 
-type ViewMode = 'login' | 'register' | 'forgot-password';
+type ViewMode = 'login' | 'register';
 
 interface LoginForm {
-  username: string;
+  email: string;
   password: string;
 }
 
 interface RegisterForm {
-  fullName: string;
+  name: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const { login, register: registerUser } = useAuth();
   const [currentView, setCurrentView] = useState<ViewMode>('login');
+  const [loading, setLoading] = useState(false);
   const [loginForm, setLoginForm] = useState<LoginForm>({
-    username: '',
+    email: '',
     password: ''
   });
   const [loginErrors, setLoginErrors] = useState<Partial<LoginForm>>({});
   const [registerForm, setRegisterForm] = useState<RegisterForm>({
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
   const [registerErrors, setRegisterErrors] = useState<Partial<RegisterForm>>({});
-  const [forgotPasswordEmail, setForgotPasswordEmail] = useState('');
-  const handleLogin = (e: FormEvent) => {
+
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     const errors: Partial<LoginForm> = {};
 
-    if (!loginForm.username.trim()) {
-      errors.username = 'Usuário é obrigatório';
+    if (!loginForm.email.trim()) {
+      errors.email = 'Email é obrigatório';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginForm.email)) {
+      errors.email = 'Email inválido';
     }
 
     if (!loginForm.password) {
@@ -50,16 +56,25 @@ function LoginPage() {
       return;
     }
 
-    alert(`Login realizado!\nUsuário: ${loginForm.username}`);
-    setLoginErrors({});
+    try {
+      setLoading(true);
+      await login(loginForm.email, loginForm.password);
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('Erro ao fazer login:', err);
+      const errorMessage = err.response?.data?.error || 'Erro ao fazer login. Verifique suas credenciais.';
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleRegister = (e: FormEvent) => {
+  const handleRegister = async (e: FormEvent) => {
     e.preventDefault();
     const errors: Partial<RegisterForm> = {};
 
-    if (!registerForm.fullName.trim()) {
-      errors.fullName = 'Nome completo é obrigatório';
+    if (!registerForm.name.trim()) {
+      errors.name = 'Nome é obrigatório';
     }
 
     if (!registerForm.email.trim()) {
@@ -85,26 +100,17 @@ function LoginPage() {
       return;
     }
 
-    alert(`Cadastro realizado com sucesso!\nNome: ${registerForm.fullName}\nEmail: ${registerForm.email}`);
-    setRegisterErrors({});
-    setRegisterForm({
-      fullName: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
-    });
-    setCurrentView('login');
-  };
-
-  const handleForgotPassword = (e: FormEvent) => {
-    e.preventDefault();
-    if (!forgotPasswordEmail.trim()) {
-      alert('Por favor, informe seu email');
-      return;
+    try {
+      setLoading(true);
+      await registerUser(registerForm.email, registerForm.password, registerForm.name);
+      navigate('/dashboard');
+    } catch (err: any) {
+      console.error('Erro ao registrar:', err);
+      const errorMessage = err.response?.data?.error || 'Erro ao registrar. Tente novamente.';
+      alert(errorMessage);
+    } finally {
+      setLoading(false);
     }
-    alert(`Instruções de recuperação de senha foram enviadas para: ${forgotPasswordEmail}`);
-    setForgotPasswordEmail('');
-    setCurrentView('login');
   };
 
   const changeView = (view: ViewMode) => {
@@ -144,17 +150,17 @@ function LoginPage() {
               </div>
               <form onSubmit={handleLogin} className="space-y-5">
                 <Input
-                  label="Usuário"
-                  type="text"
-                  placeholder="Digite seu usuário"
-                  value={loginForm.username}
+                  label="Email"
+                  type="email"
+                  placeholder="Digite seu email"
+                  value={loginForm.email}
                   onChange={(e) => {
-                    setLoginForm({ ...loginForm, username: e.target.value });
-                    if (loginErrors.username) {
-                      setLoginErrors({ ...loginErrors, username: undefined });
+                    setLoginForm({ ...loginForm, email: e.target.value });
+                    if (loginErrors.email) {
+                      setLoginErrors({ ...loginErrors, email: undefined });
                     }
                   }}
-                  error={loginErrors.username}
+                  error={loginErrors.email}
                 />
                 <Input
                   label="Senha"
@@ -169,18 +175,8 @@ function LoginPage() {
                   }}
                   error={loginErrors.password}
                 />
-                <div className="flex items-center justify-end">
-                  <Button
-                    type="button"
-                    variant="link"
-                    className="text-sm px-0"
-                    onClick={() => changeView('forgot-password')}
-                  >
-                    Esqueci minha senha
-                  </Button>
-                </div>
-                <Button type="submit" fullWidth>
-                  Entrar
+                <Button type="submit" fullWidth disabled={loading}>
+                  {loading ? 'Entrando...' : 'Entrar'}
                 </Button>
               </form>
               <div className="relative my-6">
@@ -219,17 +215,17 @@ function LoginPage() {
 
               <form onSubmit={handleRegister} className="space-y-4">
                 <Input
-                  label="Nome Completo"
+                  label="Nome"
                   type="text"
-                  placeholder="Digite seu nome completo"
-                  value={registerForm.fullName}
+                  placeholder="Digite seu nome"
+                  value={registerForm.name}
                   onChange={(e) => {
-                    setRegisterForm({ ...registerForm, fullName: e.target.value });
-                    if (registerErrors.fullName) {
-                      setRegisterErrors({ ...registerErrors, fullName: undefined });
+                    setRegisterForm({ ...registerForm, name: e.target.value });
+                    if (registerErrors.name) {
+                      setRegisterErrors({ ...registerErrors, name: undefined });
                     }
                   }}
-                  error={registerErrors.fullName}
+                  error={registerErrors.name}
                 />
 
                 <Input
@@ -279,59 +275,21 @@ function LoginPage() {
                     variant="outline"
                     fullWidth
                     onClick={() => changeView('login')}
+                    disabled={loading}
                   >
                     Voltar
                   </Button>
-                  <Button type="submit" fullWidth>
-                    Cadastrar
+                  <Button type="submit" fullWidth disabled={loading}>
+                    {loading ? 'Cadastrando...' : 'Cadastrar'}
                   </Button>
                 </div>
               </form>
             </div>
           )}
-          {currentView === 'forgot-password' && (
-            <div className="animate-fadeIn">
-              <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                  Recuperar Senha
-                </h1>
-                <p className="text-gray-600">
-                  Digite seu email para receber instruções de recuperação
-                </p>
-              </div>
-              <form onSubmit={handleForgotPassword} className="space-y-5">
-                <Input
-                  label="Email"
-                  type="email"
-                  placeholder="Digite seu email"
-                  value={forgotPasswordEmail}
-                  onChange={(e) => setForgotPasswordEmail(e.target.value)}
-                />
-                <div className="flex gap-3 pt-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    fullWidth
-                    onClick={() => changeView('login')}
-                  >
-                    Voltar
-                  </Button>
-                  <Button type="submit" fullWidth>
-                    Enviar
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )}
-          </div>
-          
-          {/* Footer */}
-          <p className="text-center text-sm text-gray-500 mt-6">
-            © 2025 ELLP - Plataforma de Voluntários
-          </p>
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

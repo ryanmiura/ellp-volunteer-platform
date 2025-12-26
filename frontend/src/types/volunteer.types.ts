@@ -3,24 +3,48 @@ export interface Volunteer {
   name: string;
   email: string;
   phone?: string;
-  isAcademic: boolean;
+  is_academic: boolean;
   course?: string;
   ra?: string;
-  entryDate: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  entry_date: string;
+  exit_date?: string;
+  is_active: boolean;
+  workshops?: string[];
+  created_at: string;
+  updated_at: string;
 }
 
-// API Response Types
-export interface VolunteerResponse {
-  volunteer: Volunteer;
+// Request Types
+export interface CreateVolunteerRequest {
+  name: string;
+  email: string;
+  phone?: string;
+  is_academic: boolean;
+  course?: string;
+  ra?: string;
+  entry_date: string;
 }
 
-export interface VolunteersListResponse {
-  volunteers: Volunteer[];
-  total: number;
-  page: number;
-  limit: number;
+export interface UpdateVolunteerRequest {
+  name?: string;
+  email?: string;
+  phone?: string;
+  is_academic?: boolean;
+  course?: string;
+  ra?: string;
+  entry_date?: string;
+}
+
+export interface InactivateVolunteerRequest {
+  exit_date: string;
+}
+
+// Filter Types
+export interface VolunteerFilter {
+  name?: string;
+  is_active?: boolean;
+  page?: number;
+  limit?: number;
 }
 
 // Form Types
@@ -31,10 +55,7 @@ export interface VolunteerFormData {
   isAcademic: boolean;
   course?: string;
   ra?: string;
-}
-
-export interface UpdateVolunteerForm extends Partial<VolunteerFormData> {
-  id: string;
+  entryDate: string;
 }
 
 // Validation Types
@@ -44,4 +65,5 @@ export interface VolunteerFormErrors {
   phone?: string;
   course?: string;
   ra?: string;
+  entryDate?: string;
 }

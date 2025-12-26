@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Serviço do Backend
   backend:
@@ -13,10 +11,13 @@ services:
     # O volume sincroniza sua pasta local com a pasta dentro do container
     volumes:
       - ./backend:/app
-    # Comando para rodar a aplicação em modo de desenvolvimento
-    command: go run cmd/main.go
+    # Comando para rodar testes e depois a aplicação (continua mesmo se testes falharem)
+    command: sh -c "echo '=== Running Backend Tests ===' && go test ./internal/... -v || true && echo '=== Starting Backend ===' && go run cmd/main.go"
     depends_on:
       - mongo
+    environment:
+      - MONGO_URI=mongodb://root:example@mongo:27017
+      - JWT_SECRET=tua-mae-aquela-ursa
 
   # Serviço do Frontend
   frontend:
@@ -30,6 +31,8 @@ services:
       # Sincroniza o código, mas usa um truque para não sobrescrever o node_modules de dentro do container
       - ./frontend:/app
       - /app/node_modules
+    # Comando para rodar testes e depois iniciar o servidor (continua mesmo se testes falharem)
+    command: sh -c "echo '=== Running Frontend Tests ===' && npm run test:run || true && echo '=== Starting Frontend ===' && npm run dev"
     depends_on:
       - backend
 

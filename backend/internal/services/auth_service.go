@@ -22,12 +22,14 @@ type AuthService interface {
 	Register(ctx context.Context, req *models.CreateUserRequest) (*models.UserResponse, error)
 	ValidateToken(token string) (*config.Claims, error)
 	RefreshToken(token string) (string, error)
+	RefreshTokenWithRefreshToken(refreshToken string) (*LoginResponse, error)
 }
 
 // LoginResponse representa a resposta de login
 type LoginResponse struct {
-	User  models.UserResponse `json:"user"`
-	Token string              `json:"token"`
+	User         models.UserResponse `json:"user"`
+	AccessToken  string              `json:"access_token"`
+	RefreshToken string              `json:"refresh_token"`
 }
 
 // authService implementa AuthService
@@ -60,14 +62,21 @@ func (s *authService) Login(ctx context.Context, email, password string) (*Login
 		return nil, ErrInvalidCredentials
 	}
 
-	token, err := config.GenerateToken(user.ID.Hex(), user.Email, user.Role)
+	accessToken, err := config.GenerateToken(user.ID.Hex(), user.Email, user.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate refresh token with longer expiration (7 days)
+	refreshToken, err := config.GenerateRefreshToken(user.ID.Hex(), user.Email)
 	if err != nil {
 		return nil, err
 	}
 
 	return &LoginResponse{
-		User:  user.ToResponse(),
-		Token: token,
+		User:         user.ToResponse(),
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
 	}, nil
 }
 
@@ -107,4 +116,36 @@ func (s *authService) ValidateToken(token string) (*config.Claims, error) {
 // RefreshToken renova um token JWT
 func (s *authService) RefreshToken(token string) (string, error) {
 	return config.RefreshToken(token)
+}
+
+// RefreshTokenWithRefreshToken gera novo access token usando refresh token
+func (s *authService) RefreshTokenWithRefreshToken(refreshToken string) (*LoginResponse, error) {
+	claims, err := config.ValidateToken(refreshToken)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate new access token
+	accessToken, err := config.GenerateToken(claims.UserID, claims.Email, claims.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate new refresh token
+	newRefreshToken, err := config.GenerateRefreshToken(claims.UserID, claims.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	// Get user to include in response
+	user, err := s.userRepo.FindByEmail(context.Background(), claims.Email)
+	if err != nil {
+		return nil, err
+	}
+
+	return &LoginResponse{
+		User:         user.ToResponse(),
+		AccessToken:  accessToken,
+		RefreshToken: newRefreshToken,
+	}, nil
 }

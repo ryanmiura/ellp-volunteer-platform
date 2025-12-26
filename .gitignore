@@ -2,6 +2,7 @@
 .env
 
 # Dependências do Node
+node_modules/
 frontend/node_modules/
 
 # Pasta de build do Frontend

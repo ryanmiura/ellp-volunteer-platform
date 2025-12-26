@@ -161,6 +161,45 @@ func (h *AuthHandler) RefreshToken(c *gin.Context) {
 	})
 }
 
+// RefreshTokenFromBody godoc
+// @Summary Renovar token usando refresh token
+// @Description Gera novo access token a partir de um refresh token válido
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body map[string]string true "Refresh token"
+// @Success 200 {object} services.LoginResponse
+// @Failure 400 {object} gin.H
+// @Failure 401 {object} gin.H
+// @Router /api/auth/refresh [post]
+func (h *AuthHandler) RefreshTokenFromBody(c *gin.Context) {
+	var req map[string]string
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Refresh token não fornecido",
+		})
+		return
+	}
+
+	refreshToken, ok := req["refresh_token"]
+	if !ok || refreshToken == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Refresh token não fornecido",
+		})
+		return
+	}
+
+	response, err := h.authService.RefreshTokenWithRefreshToken(refreshToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"error": "Refresh token inválido ou expirado",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
 // Me godoc
 // @Summary Obter informações do usuário autenticado
 // @Description Retorna as informações do usuário a partir do token JWT

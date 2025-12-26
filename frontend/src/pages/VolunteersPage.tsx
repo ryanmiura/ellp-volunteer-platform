@@ -1,111 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Volunteer } from '../types/volunteer.types';
+import { volunteersService } from '../services/volunteers.service';
+import { pdfService } from '../services/pdf.service';
 import viewIcon from '../assets/view-icon.svg';
 import editIcon from '../assets/edit-icon.svg';
 import trashIcon from '../assets/trash-icon.svg';
 
-const mockVolunteers: Volunteer[] = [
-  {
-    id: '1',
-    name: 'João Silva',
-    email: 'joao.silva@email.com',
-    phone: '(11) 99999-9999',
-    isAcademic: true,
-    course: 'Engenharia de Computação',
-    ra: '123456',
-    entryDate: new Date('2024-01-10'),
-    createdAt: new Date('2024-01-15'),
-    updatedAt: new Date('2024-01-15')
-  },
-  {
-    id: '2',
-    name: 'Maria Santos',
-    email: 'maria.santos@email.com',
-    phone: '(11) 88888-8888',
-    isAcademic: true,
-    course: 'Psicologia',
-    ra: '234567',
-    entryDate: new Date('2024-01-20'),
-    createdAt: new Date('2024-02-01'),
-    updatedAt: new Date('2024-02-01')
-  },
-  {
-    id: '3',
-    name: 'Pedro Oliveira',
-    email: 'pedro.oliveira@email.com',
-    phone: '(11) 77777-7777',
-    isAcademic: false,
-    entryDate: new Date('2024-02-10'),
-    createdAt: new Date('2024-02-15'),
-    updatedAt: new Date('2024-02-15')
-  },
-  {
-    id: '4',
-    name: 'Ana Costa',
-    email: 'ana.costa@email.com',
-    phone: '(11) 66666-6666',
-    isAcademic: true,
-    course: 'Medicina',
-    ra: '345678',
-    entryDate: new Date('2024-02-25'),
-    createdAt: new Date('2024-03-01'),
-    updatedAt: new Date('2024-03-01')
-  },
-  {
-    id: '5',
-    name: 'Carlos Rodrigues',
-    email: 'carlos.rodrigues@email.com',
-    phone: '(11) 55555-5555',
-    isAcademic: true,
-    course: 'Direito',
-    ra: '456789',
-    entryDate: new Date('2024-03-10'),
-    createdAt: new Date('2024-03-15'),
-    updatedAt: new Date('2024-03-15')
-  },
-  {
-    id: '6',
-    name: 'Fernanda Lima',
-    email: 'fernanda.lima@email.com',
-    phone: '(11) 44444-4444',
-    isAcademic: false,
-    entryDate: new Date('2024-03-20'),
-    createdAt: new Date('2024-04-01'),
-    updatedAt: new Date('2024-04-01')
-  },
-  {
-    id: '7',
-    name: 'Lucas Pereira',
-    email: 'lucas.pereira@email.com',
-    phone: '(11) 33333-3333',
-    isAcademic: true,
-    course: 'Administração',
-    ra: '567890',
-    entryDate: new Date('2024-04-05'),
-    createdAt: new Date('2024-04-15'),
-    updatedAt: new Date('2024-04-15')
-  },
-  {
-    id: '8',
-    name: 'Juliana Alves',
-    email: 'juliana.alves@email.com',
-    phone: '(11) 22222-2222',
-    isAcademic: true,
-    course: 'Educação Física',
-    ra: '678901',
-    entryDate: new Date('2024-04-20'),
-    createdAt: new Date('2024-05-01'),
-    updatedAt: new Date('2024-05-01')
-  }
-];
-
 function VolunteersPage() {
-  const [volunteers] = useState<Volunteer[]>(mockVolunteers);
+  const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const navigate = useNavigate();
+
+  // Carrega voluntários ao montar o componente
+  useEffect(() => {
+    loadVolunteers();
+  }, []);
+
+  const loadVolunteers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const data = await volunteersService.getAll({ is_active: true });
+      setVolunteers(data);
+    } catch (err) {
+      console.error('Erro ao carregar voluntários:', err);
+      setError('Erro ao carregar voluntários. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredVolunteers = volunteers.filter(volunteer =>
     volunteer.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -120,18 +48,78 @@ function VolunteersPage() {
   };
 
   const handleView = (volunteer: Volunteer) => {
-    alert(`Visualizar voluntário: ${volunteer.name}\nEmail: ${volunteer.email}\nTelefone: ${volunteer.phone || 'Não informado'}`);
+    const entryDate = new Date(volunteer.entry_date).toLocaleDateString('pt-BR');
+    alert(
+      `Voluntário: ${volunteer.name}\n` +
+      `Email: ${volunteer.email}\n` +
+      `Telefone: ${volunteer.phone || 'Não informado'}\n` +
+      `Acadêmico: ${volunteer.is_academic ? 'Sim' : 'Não'}\n` +
+      `Curso: ${volunteer.course || 'N/A'}\n` +
+      `RA: ${volunteer.ra || 'N/A'}\n` +
+      `Data de entrada: ${entryDate}\n` +
+      `Status: ${volunteer.is_active ? 'Ativo' : 'Inativo'}`
+    );
   };
 
   const handleEdit = (volunteer: Volunteer) => {
     alert(`Editar voluntário: ${volunteer.name}\nFuncionalidade em desenvolvimento...`);
   };
 
-  const handleDeactivate = (volunteer: Volunteer) => {
+  const handleDeactivate = async (volunteer: Volunteer) => {
     if (confirm(`Tem certeza que deseja inativar o voluntário ${volunteer.name}?`)) {
-      alert(`Voluntário ${volunteer.name} foi inativado com sucesso!`);
+      try {
+        const exitDate = new Date().toISOString().split('T')[0];
+        await volunteersService.inactivate(volunteer.id, { exit_date: exitDate });
+        alert(`Voluntário ${volunteer.name} foi inativado com sucesso!`);
+        loadVolunteers(); // Recarrega a lista
+      } catch (err) {
+        console.error('Erro ao inativar voluntário:', err);
+        alert('Erro ao inativar voluntário. Tente novamente.');
+      }
     }
   };
+
+  const handleDownloadCertificate = async (volunteer: Volunteer) => {
+    try {
+      await pdfService.generateParticipationCertificate(volunteer);
+    } catch (err) {
+      console.error('Erro ao gerar certificado:', err);
+      alert('Erro ao gerar certificado. Tente novamente.');
+    }
+  };
+
+  const handleDownloadReport = async (volunteer: Volunteer) => {
+    try {
+      await pdfService.generateParticipationReport(volunteer);
+    } catch (err) {
+      console.error('Erro ao gerar relatório:', err);
+      alert('Erro ao gerar relatório. Tente novamente.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-6 flex items-center justify-center">
+        <div className="text-lg text-gray-600">Carregando voluntários...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6">
+        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+          <p className="text-red-800">{error}</p>
+          <button
+            onClick={loadVolunteers}
+            className="mt-2 text-sm text-red-600 hover:text-red-800 underline"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6">
@@ -212,7 +200,7 @@ function VolunteersPage() {
                       {volunteer.phone || '-'}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {volunteer.isAcademic ? 'Sim' : 'Não'}
+                      {volunteer.is_academic ? 'Sim' : 'Não'}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                       {volunteer.course || '-'}
@@ -221,13 +209,31 @@ function VolunteersPage() {
                       {volunteer.ra || '-'}
                     </td>
                     <td className="px-4 py-4 whitespace-nowrap text-sm font-medium w-32">
-                      <div className="flex space-x-2">
+                      <div className="flex space-x-1">
                         <button
                           onClick={() => handleView(volunteer)}
                           className="w-8 h-8 text-blue-600 hover:text-blue-900 p-1 rounded flex items-center justify-center"
                           title="Visualizar"
                         >
                           <img src={viewIcon} alt="Visualizar" className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDownloadCertificate(volunteer)}
+                          className="w-8 h-8 text-green-600 hover:text-green-900 p-1 rounded flex items-center justify-center"
+                          title="Baixar Certificado"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                          </svg>
+                        </button>
+                        <button
+                          onClick={() => handleDownloadReport(volunteer)}
+                          className="w-8 h-8 text-orange-600 hover:text-orange-900 p-1 rounded flex items-center justify-center"
+                          title="Baixar Relatório"
+                        >
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                          </svg>
                         </button>
                         <button
                           onClick={() => handleEdit(volunteer)}

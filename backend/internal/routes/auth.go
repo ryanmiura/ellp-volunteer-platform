@@ -15,12 +15,12 @@ func SetupAuthRoutes(router *gin.Engine, authHandler *handlers.AuthHandler) {
 		authRoutes.POST("/login", authHandler.Login)
 		authRoutes.POST("/register", authHandler.Register)
 		authRoutes.POST("/logout", authHandler.Logout)
-		authRoutes.POST("/refresh", authHandler.RefreshToken)
+		authRoutes.POST("/refresh", authHandler.RefreshTokenFromBody)
 	}
 
 	// Rotas protegidas de autenticação (requerem token válido)
 	protectedAuthRoutes := router.Group("/api/auth")
-	protectedAuthRoutes.Use(middleware.AuthMiddleware())
+	protectedAuthRoutes.Use(middleware.AuthMiddlewareFunc())
 	{
 		protectedAuthRoutes.GET("/me", authHandler.Me)
 	}
